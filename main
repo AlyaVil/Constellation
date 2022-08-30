@@ -1,0 +1,56 @@
+var constellation = [];
+var n;
+var d;
+
+function setup() {
+  createCanvas(1112, 834);
+	colorMode(HSB, 255);
+  pixelDensity(1); // Set 1 because it's too slow on firefox
+  n = 200;
+
+  for (var i = 0; i <= n; i++) {
+    constellation.push(new star());
+  }
+  strokeWeight(1);
+  stroke('#00FFaF');
+}
+
+function draw() {
+
+  background('#000020');
+
+  for (var i = 0; i < constellation.length; i++) {
+    constellation[i].update();
+    for (var j = 0; j < constellation.length; j++) {
+      if (i > j) { // "if (i > j)" => to check one time distance between two stars
+        d = constellation[i].loc.dist(constellation[j].loc); // Distance between two stars
+        if (d <= width / 7) { // if d is less than width/7 px, we draw a line between the two stars
+					let hu = 2 * dist(constellation[i].loc.x, constellation[i].loc.y, constellation[j].loc.x, constellation[j].loc.y);
+					stroke(hu%255, 200, 255);
+          line(constellation[i].loc.x, constellation[i].loc.y, constellation[j].loc.x, constellation[j].loc.y)
+        }
+      }
+    }
+  }
+
+}
+
+function star() {
+
+  this.a = random(5 * TAU); // "5*TAU" => render will be more homogeneous
+  this.r = random(width * .2, width * .15); // first position will looks like a donut
+  this.loc = createVector(width / 2 + sin(this.a) * this.r, height / 2 + cos(this.a) * this.r);
+  this.speed = createVector();
+  this.speed = p5.Vector.random2D();
+  this.bam = createVector();
+  this.m;
+
+
+  this.update = function() {
+      this.bam = p5.Vector.random2D(); // movement of star will be a bit erractic
+      //this.bam.random2D();
+      this.bam.mult(0.45);
+      this.speed.add(this.bam);
+      // speed is done according distance between loc and the mouse :
+      this.m = constrain(map(dist(this.loc.x, this.loc.y, mouseX, mouseY), 0, width, 8, .05), .05, 8); // constrain => avoid returning "not a number"
+      this.speed.normalize().mult(this.m);
