@@ -54,3 +54,24 @@ function star() {
       // speed is done according distance between loc and the mouse :
       this.m = constrain(map(dist(this.loc.x, this.loc.y, mouseX, mouseY), 0, width, 8, .05), .05, 8); // constrain => avoid returning "not a number"
       this.speed.normalize().mult(this.m);
+// No collision detection, instead loc is out of bound
+      // it reappears on the opposite side :
+      if (dist(this.loc.x, this.loc.y, width / 2, height / 2) > (width / 2) * 0.98) {
+        if (this.loc.x < width / 2) {
+          this.loc.x = width - this.loc.x - 4; // "-4" => avoid blinking stuff
+        } else if (this.loc.x > width / 2) {
+          this.loc.x = width - this.loc.x + 4; // "+4"  => avoid blinking stuff
+        }
+        if (this.loc.y < height / 2) {
+          this.loc.y = width - this.loc.y - 4;
+        } else if (this.loc.x > height / 2) {
+          this.loc.y = width - this.loc.y + 4;
+        }
+      }
+      this.loc = this.loc.add(this.speed);
+    } // End of update()
+} // End of class
+
+function keyPressed(){
+  save("img_" + month() + '-' + day() + '_' + hour() + '-' + minute() + '-' + second() + ".jpg");
+}
